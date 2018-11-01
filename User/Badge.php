@@ -12,23 +12,23 @@ trait Badge
 {
     protected $_badges                  = false;
     protected $_haveReceivedBadgeEmail  = false;
-    
+
     private function getBadges()
     {
         if($this->_badges === false)
         {
             $this->_badges = self::getModel('Models_Users_Badges')->getByRefUser($this->getId());
         }
-        
+
         return $this->_badges;
     }
-    
+
     public function haveBadge($badgeId)
     {
         if($this->isValid() && $this->getRole() != 'guest' && BadgeAlias::isIndex($badgeId))
         {
             $badges = $this->getBadges();
-            
+
             if(!is_null($badges) && count($badges) > 0)
             {
                 foreach($badges AS $badge)
@@ -40,16 +40,16 @@ trait Badge
                 }
             }
         }
-        
+
         return false;
     }
-    
+
     public function getBadgeDetail($badgeId)
     {
         if($this->isValid() && $this->getRole() != 'guest' && BadgeAlias::isIndex($badgeId))
         {
             $badges = $this->getBadges();
-            
+
             if(!is_null($badges) && count($badges) > 0)
             {
                 foreach($badges AS $badge)
@@ -61,10 +61,10 @@ trait Badge
                 }
             }
         }
-        
+
         return null;
     }
-    
+
     public function giveBadge($badgeId, $extraDetail = null)
     {
         // No badge given while clearing or deleting saves!
@@ -72,7 +72,7 @@ trait Badge
         {
             return;
         }
-        
+
         if($this->isValid() && $this->getRole() != 'guest')
         {
             if(BadgeAlias::isIndex($badgeId) && BadgeAlias::isActive($badgeId))
@@ -86,7 +86,7 @@ trait Badge
                             'refBadge'      => $badgeId,
                             'dateObtained'  => new \Zend_Db_Expr('NOW()'),
                         );
-                        
+
                         if(!is_null($extraDetail))
                         {
                             if($badgeId == 7800)
@@ -98,16 +98,16 @@ trait Badge
                                 $insert['extraDetail'] = \Zend_Json::encode($extraDetail);
                             }
                         }
-                        
+
                         self::getModel('Models_Users_Badges')->insert($insert);
-                        
+
                         $badge = BadgeAlias::get($badgeId);
-                        
+
                         if($this->_haveReceivedBadgeEmail === false && $this->receiveEmailBadges() === true && APPLICATION_ENV == 'production' && $badgeId != 65535)
                         {
                             $mail = new \EDSM_Mail();
                             $oldLanguage = $mail->getView()->language; // Get old language
-                            
+
                             $mail->setTemplate('badge.phtml');
                             $mail->setLanguage($this->getLocale());
                             $mail->setVariables(array(
@@ -119,18 +119,20 @@ trait Badge
                                 'badgeImage'        => BadgeAlias::getImageSrc($badgeId),
                                 'extraDetail'       => $extraDetail,
                             ));
-                            
+
                             $mail->addTo($this->getEmail());
-                            
-                            $mail->setSubject($mail->getView()->translate('EMAIL\Badge unlocked! - %1$s' , $badge['name']));
+
+                            $mail->setSubject(
+                                $mail->getView()->translate('EMAIL\Badge unlocked! - %1$s' , $badge['name'])
+                            );
                             $mail->send();
                             $mail->closeConnection();
-                            
+
                             $mail->setLanguage($oldLanguage); // Reset language
-                            
+
                             $this->_haveReceivedBadgeEmail = true;
                         }
-                    } 
+                    }
                     catch(\Zend_Exception $e)
                     {
                         // Do nothing, too bad the user will not see our badge email :)
@@ -143,7 +145,7 @@ trait Badge
                     {
                         $currentBadges  = self::getModel('Models_Users_Badges')->getByRefUser($this->getId());
                         $currentBadge   = null;
-                        
+
                         foreach($currentBadges AS $testBadge)
                         {
                             if($testBadge['refBadge'] == $badgeId)
@@ -152,7 +154,7 @@ trait Badge
                                 break;
                             }
                         }
-                        
+
                         if(!is_null($currentBadge))
                         {
                             // Records are merged
@@ -166,16 +168,16 @@ trait Badge
                                 {
                                     $currentBadgeExtraDetail = \Zend_Json::decode($currentBadge['extraDetail']);
                                 }
-                                
+
                                 // Convert to new format
                                 if(!array_key_exists('records', $currentBadgeExtraDetail))
                                 {
                                     $currentBadgeExtraDetail = array('records' => array($currentBadgeExtraDetail));
                                 }
-                                
+
                                 // Check if already present in the details
                                 $addNewRecord = true;
-                                
+
                                 foreach($currentBadgeExtraDetail['records'] AS $key => $record)
                                 {
                                     if(serialize($record) == serialize($extraDetail))
@@ -184,12 +186,12 @@ trait Badge
                                         break;
                                     }
                                 }
-                                
+
                                 if($addNewRecord === true)
                                 {
                                     $currentBadgeExtraDetail['records'][] = $extraDetail;
                                 }
-                                
+
                                 $currentBadgeExtraDetail = \Zend_Json::encode($currentBadgeExtraDetail);
                                 if(!array_key_exists('extraDetail', $currentBadge) || $currentBadgeExtraDetail != $currentBadge['extraDetail'])
                                 {
@@ -199,7 +201,7 @@ trait Badge
                             else
                             {
                                 $extraDetail = \Zend_Json::encode($extraDetail);
-                                
+
                                 if(!array_key_exists('extraDetail', $currentBadge) || $extraDetail != $currentBadge['extraDetail'])
                                 {
                                     self::getModel('Models_Users_Badges')->updateById($currentBadge['id'], array('extraDetail' => $extraDetail));
@@ -209,12 +211,12 @@ trait Badge
                     }
                 }
             }
-            
+
             // Dependent badges ^^
             if($this->haveBadge(10) && $this->haveBadge(20) && $this->haveBadge(30) && $this->haveBadge(50) === false)
             {
                 $this->giveBadge(50);
-            }   
+            }
         }
     }
 }
