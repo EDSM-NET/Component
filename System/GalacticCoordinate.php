@@ -95,16 +95,11 @@ trait GalacticCoordinate
     {
         if(!is_null($this->getX()))
         {
-            /*
-            return (asin(
-                  cos($this->getGalacticCoordinatesLatitude() * pi() / 180)
-                * cos(($this->getGalacticCoordinatesLongitude() - 32.93192) * pi() / 180)
-                / cos($this->getEquatorialCoordinatesDeclination() * pi() / 180)
-            ) * 180 / pi()) + 192.85948;
-            */
-
             return (atan2(
-                cos($this->getGalacticCoordinatesLatitude()*pi()/180) * cos(($this->getGalacticCoordinatesLongitude()-32.93192)*pi()/180),
+                (
+                      cos($this->getGalacticCoordinatesLatitude() * pi() / 180)
+                    * cos(($this->getGalacticCoordinatesLongitude() - 32.93192) * pi() / 180)
+                ),
                 (
                       sin($this->getGalacticCoordinatesLatitude()*pi()/180) * cos(27.12825*pi()/180)
                     - cos($this->getGalacticCoordinatesLatitude()*pi()/180) * sin(27.12825*pi()/180) * sin(($this->getGalacticCoordinatesLongitude()-32.93192)*pi()/180)
