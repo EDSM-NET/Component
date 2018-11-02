@@ -31,7 +31,7 @@ trait Body
         {
             foreach($bodies AS $body)
             {
-                $body = EDSM_System_Body::getInstance($body['id']);
+                $body = \EDSM_System_Body::getInstance($body['id']);
 
                 if($body->isMainStar() === true)
                 {

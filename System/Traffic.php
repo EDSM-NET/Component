@@ -74,7 +74,7 @@ trait Traffic
 
                         if(!is_null($ship))
                         {
-                            $ship       = EDSM_User_Ship::getInstance($ship);
+                            $ship       = \EDSM_User_Ship::getInstance($ship);
                             $shipName   = $ship->getName();
 
                             if(array_key_exists($shipName, $breakdown))
