@@ -71,7 +71,7 @@ trait Body
             {
                 foreach($bodies AS $body)
                 {
-                    $body       = EDSM_System_Body::getInstance($body['id']);
+                    $body       = \EDSM_System_Body::getInstance($body['id']);
                     $materials  = $body->getMaterials();
 
                     if(!is_null($materials) && count($materials) > 0)
