@@ -90,7 +90,7 @@ trait Information
                 return $refFaction;
             }
 
-            return EDSM_System_Station_Faction::getInstance($refFaction);
+            return \EDSM_System_Station_Faction::getInstance($refFaction);
         }
 
         return null;

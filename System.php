@@ -14,6 +14,7 @@ class System extends Instance
     use \Component\System\GalacticCoordinate;
     use \Component\System\GalacticMapping;
     use \Component\System\Galnet;
+    use \Component\System\Information;
     use \Component\System\Permit;
     use \Component\System\Power;
     use \Component\System\Station;
