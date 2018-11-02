@@ -110,7 +110,7 @@ abstract class Instance
     {
         if(!array_key_exists($cache, self::$caches))
         {
-            $bootstrap              = Zend_Registry::get('Zend_Application');
+            $bootstrap              = \Zend_Registry::get('Zend_Application');
             $cacheManager           = $bootstrap->getResource('cachemanager');
             self::$caches[$cache]   = $cacheManager->getCache($cache);
         }
