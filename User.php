@@ -14,6 +14,7 @@ class User extends Instance
     use \Component\User\Credit;
     use \Component\User\Data;
     use \Component\User\Exploration;
+    use \Component\User\Faction;
     use \Component\User\Friend;
     use \Component\User\Guild;
     use \Component\User\HoloMe;
@@ -26,20 +27,20 @@ class User extends Instance
     use \Component\User\Rank;
     use \Component\User\Role;
     use \Component\User\Ship;
-    
+
     protected $_defaultModel    = 'Models_Users';
     protected $_primaryKey      = 'id';
-    
+
     //TODO: Remove cache here
     static protected $cache = null;
-    
+
     public function getSaltedPassword()
     {
         if(!$this->isValid())
         {
             return null;
         }
-            
+
         return $this->getIdentity('password');
     }
 
@@ -49,27 +50,27 @@ class User extends Instance
         {
             return 'Guest';
         }
-        
+
         return $this->getIdentity('commanderName');
     }
-    
+
     public function getEmail()
     {
         return $this->getIdentity('email');
     }
-    
+
     public function getPlatform()
     {
         return $this->getIdentity('platform');
     }
-    
+
     public function getConfirmationString()
     {
         return $this->getIdentity('confirmation_string');
     }
-    
-    
-    
+
+
+
     /**
      * LINKED ACCOUNT
      */
@@ -91,7 +92,7 @@ class User extends Instance
                     {
                         if($linkedAccount['refUser'] == $this->getId())
                         {
-                            $tempUser = \Component\User::getInstance($linkedAccount['refLink']); 
+                            $tempUser = \Component\User::getInstance($linkedAccount['refLink']);
                         }
                         else
                         {
@@ -113,13 +114,13 @@ class User extends Instance
                     $this->_linkedAccount = $tempAccounts;
                 }
             }
-        }   
-        
+        }
+
         return $this->_linkedAccount;
     }
-    
-    
-    
+
+
+
     /**
      * API
      */
@@ -129,23 +130,23 @@ class User extends Instance
         {
             return $this->getIdentity('apiKey');
         }
-        
+
         return null;
     }
-    
+
     public function useNewJournalApi()
     {
         if($this->getIdentity('useNewJournalApi') == 1)
         {
             return true;
         }
-        
+
         return false;
     }
-    
+
     /**
      * Generate a unique color based on user PRIMARY id
-     * 
+     *
      * @param type $minimumBrightness
      * @param type $spec
      * @return int
@@ -154,10 +155,10 @@ class User extends Instance
     {
         $spec                   = min(max(0, $spec), 10);
         $minimumBrightness      = min(max(0, $minimumBrightness), 255);
-    	
+
         $hash                   = md5('EDSM' . $this->getId());
         $colors                 = array();
-        
+
         //convert hash into 3 decimal values between 0 and 255
         for($i = 0; $i < 3; $i++)
         {
@@ -168,8 +169,8 @@ class User extends Instance
                 )
             );
         }
-        
-        
+
+
         if($minimumBrightness > 0)
         {
             // Loop until brightness is above or equal to minimumBrightness
@@ -181,7 +182,7 @@ class User extends Instance
                 }
             }
         }
-        
+
         return $colors;
     }
 }
