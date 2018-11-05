@@ -11,6 +11,8 @@ trait Body
     protected $_bodies          = false;
     protected $_bodiesCount     = false;
 
+    protected $_bodiesUser      = array();
+
     protected $_allMaterials    = false;
 
     public function getBodies()
@@ -56,6 +58,20 @@ trait Body
         }
 
         return $this->_bodiesCount;
+    }
+
+
+
+    public function getUserBodies(\Component\User $user)
+    {
+        $userId = $user->getId();
+
+        if(!array_key_exists($userId, $this->_bodiesUser))
+        {
+            $this->_bodiesUser[$userId] = self::getModel('Models_Systems_Bodies_Users')->getByRefUserAndRefSystem($userId, $this->getId());
+        }
+
+        return $this->_bodiesUser[$userId];
     }
 
 
