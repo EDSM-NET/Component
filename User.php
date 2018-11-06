@@ -25,6 +25,7 @@ class User extends Instance
     use \Component\User\Power;
     use \Component\User\PublicProfile;
     use \Component\User\Rank;
+    use \Component\User\Reputation;
     use \Component\User\Role;
     use \Component\User\Ship;
 
