@@ -6,20 +6,28 @@
 
 namespace   Component\System;
 
+use         Alias\Body\Planet\ReserveLevel;
+
 trait Body
 {
-    protected $_bodies          = false;
-    protected $_bodiesCount     = false;
+    protected $_bodies              = false;
+    protected $_bodiesCount         = false;
 
-    protected $_bodiesUser      = array();
+    protected $_bodiesScannedUser   = array();
+    protected $_bodiesMappedUser    = array();
 
-    protected $_allMaterials    = false;
+    protected $_allMaterials        = false;
 
     public function getBodies()
     {
         if($this->_bodies === false)
         {
             $this->_bodies = self::getModel('Models_Systems_Bodies')->getByRefSystem($this->getId());
+
+            foreach($this->_bodies AS $key => $body)
+            {
+                $this->_bodies[$key] = \EDSM_System_Body::getInstance($body['id']);
+            }
         }
 
         return $this->_bodies;
@@ -33,8 +41,6 @@ trait Body
         {
             foreach($bodies AS $body)
             {
-                $body = \EDSM_System_Body::getInstance($body['id']);
-
                 if($body->isMainStar() === true)
                 {
                     return $body;
@@ -62,16 +68,70 @@ trait Body
 
 
 
-    public function getUserBodies(\Component\User $user)
+    public function getUserBodiesScanned(\Component\User $user)
     {
         $userId = $user->getId();
 
-        if(!array_key_exists($userId, $this->_bodiesUser))
+        if(!array_key_exists($userId, $this->_bodiesScannedUser))
         {
-            $this->_bodiesUser[$userId] = self::getModel('Models_Systems_Bodies_Users')->getByRefUserAndRefSystem($userId, $this->getId());
+            $this->_bodiesScannedUser[$userId] = self::getModel('Models_Systems_Bodies_Users')->getByRefUserAndRefSystem($userId, $this->getId());
         }
 
-        return $this->_bodiesUser[$userId];
+        return $this->_bodiesScannedUser[$userId];
+    }
+
+    public function getUserBodiesMapped(\Component\User $user)
+    {
+        $userId = $user->getId();
+
+        if(!array_key_exists($userId, $this->_bodiesMappedUser))
+        {
+            $this->_bodiesMappedUser[$userId] = self::getModel('Models_Systems_Bodies_UsersSAA')->getByRefUserAndRefSystem($userId, $this->getId());
+        }
+
+        return $this->_bodiesMappedUser[$userId];
+    }
+
+
+
+    public function getReserveLevel()
+    {
+        $reserveLevel   = null;
+        $bodies         = $this->getBodies();
+
+        if(!is_null($bodies) && count($bodies) > 0)
+        {
+            foreach($bodies AS $body)
+            {
+                $bodyReserveLevel = $body->getReserveLevel();
+
+                if(!is_null($bodyReserveLevel))
+                {
+                    if(is_null($reserveLevel))
+                    {
+                        $reserveLevel = $bodyReserveLevel;
+                    }
+                    elseif($bodyReserveLevel < $reserveLevel)
+                    {
+                        $reserveLevel = $bodyReserveLevel;
+                    }
+                }
+            }
+        }
+
+        return $reserveLevel;
+    }
+
+    public function getReserveLevelName()
+    {
+        $reserveLevel = $this->getReserveLevel();
+
+        if(!is_null($reserveLevel))
+        {
+            return ReserveLevel::get($reserveLevel);
+        }
+
+        return null;
     }
 
 
@@ -87,7 +147,6 @@ trait Body
             {
                 foreach($bodies AS $body)
                 {
-                    $body       = \EDSM_System_Body::getInstance($body['id']);
                     $materials  = $body->getMaterials();
 
                     if(!is_null($materials) && count($materials) > 0)
