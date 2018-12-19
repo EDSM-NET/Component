@@ -70,6 +70,18 @@ class User extends Instance
         return $this->getIdentity('confirmation_string');
     }
 
+    public function havePassword()
+    {
+        $password = $this->getIdentity('password');
+
+        if(!is_null($password))
+        {
+            return true;
+        }
+
+        return false;
+    }
+
 
 
     /**
