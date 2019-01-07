@@ -62,6 +62,14 @@ class User extends Instance
 
     public function getPlatform()
     {
+        $platform = $this->getIdentity('platform');
+
+        // Stay compatible with the code, but need PC to catch the new UNIQUE index
+        if($platform == 'PC')
+        {
+            return null;
+        }
+
         return $this->getIdentity('platform');
     }
 
