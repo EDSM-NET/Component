@@ -112,7 +112,19 @@ trait Information
 
     public function getFactionState()
     {
-        return $this->getInformation('factionState');
+        $controllingFaction = $this->getFaction();
+
+        if(!is_null($controllingFaction))
+        {
+            $currentSystemInfluence = $controllingFaction->getInfluences($this->getId());
+
+            if(!is_null($currentSystemInfluence))
+            {
+                return $currentSystemInfluence['state'];
+            }
+        }
+
+        return null;
     }
 
     public function getFactionStateName()
