@@ -57,7 +57,14 @@ trait Information
 
     public function getAllegiance()
     {
-        return $this->getInformation('allegiance');
+        $controllingFaction = $this->getFaction();
+
+        if(!is_null($controllingFaction))
+        {
+            return $controllingFaction->getAllegiance();
+        }
+
+        return null;
     }
 
     public function getAllegianceName()
@@ -69,7 +76,14 @@ trait Information
 
     public function getGovernment()
     {
-        return $this->getInformation('government');
+        $controllingFaction = $this->getFaction();
+
+        if(!is_null($controllingFaction))
+        {
+            return $controllingFaction->getGovernment();
+        }
+
+        return null;
     }
 
     public function getGovernmentName()
