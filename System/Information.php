@@ -129,7 +129,14 @@ trait Information
 
     public function getFactionStateName()
     {
-        return State::get($this->getFactionState());
+        $factionState = $this->getFactionState();
+
+        if(!is_null($factionState))
+        {
+            return State::get($factionState);
+        }
+
+        return null;
     }
 
 

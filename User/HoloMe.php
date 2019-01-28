@@ -112,6 +112,58 @@ trait HoloMe
             }
         }
 
-        return '/img/users/default.png';
+        return '/img/users/default.png' . '?v=' . filemtime(PUBLIC_PATH . '/img/users/default.png');
+    }
+
+    public function getHashedImage($currentOptions = array(), $realName = false)
+    {
+        $availableOptionsByPriority = array_keys(\Alias\Commander\Avatar\Category::getAll());
+        $lastValue                  = null;
+
+        while(count($availableOptionsByPriority) > 0)
+        {
+            $testedHash     = array();
+            $defaultValue   = null;
+
+            foreach($availableOptionsByPriority AS $availableOption)
+            {
+                if(array_key_exists($availableOption, $currentOptions))
+                {
+                    $testedHash[$availableOption] = $currentOptions[$availableOption];
+                }
+                else
+                {
+                    // Grab default value
+                    $useClass       = '\Alias\Commander\Avatar\\' . $availableOption;
+                    $defaultValue   = $useClass::getDefault();
+
+                    if(!is_null($defaultValue))
+                    {
+                        $testedHash[$availableOption] = $defaultValue;
+                    }
+                }
+            }
+
+            if(count($testedHash) > 0)
+            {
+                //\Zend_Debug::dump($testedHash);
+
+                $testedHash = md5(implode(';', $testedHash));
+                $testFile   = implode('/', array_slice(str_split($testedHash, 1), 0, 5)) . '/' . $testedHash . '.jpg';
+
+                if(file_exists(PUBLIC_PATH . '/img/avatar/' . $testFile) || $realName === true)
+                {
+                    return '/img/avatar/' . $testFile;
+                }
+                else
+                {
+                    // Reverse and add default value and test each time!
+                }
+            }
+
+            $lastValue      = array_pop($availableOptionsByPriority);
+        }
+
+        return null;
     }
 }
