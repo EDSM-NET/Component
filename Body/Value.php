@@ -8,21 +8,29 @@ namespace   Component\Body;
 
 trait Value
 {
-    public function getEstimatedValue()
+    public function getEstimatedValue($applyMappingMultiplier = false)
     {
+        $efficiencyBonus = null;
+
+        if($applyMappingMultiplier === true)
+        {
+            $efficiencyBonus = false; // Mapping without first mapping
+        }
+
         // Call a static method which can be used without instancing the complete body
         return static::calculateEstimatedValue(
             $this->getMainType(),
             $this->getType(),
             $this->getMass(),
-            $this->getTerraformState()
+            $this->getTerraformState(),
+            $efficiencyBonus
         );
     }
 
     /*
      *  @SEE https://forums.frontier.co.uk/showthread.php/232000-Exploration-value-formulae/
      */
-    static public function calculateEstimatedValue($mainType, $type, $mass, $terraformState, $efficiencyBonus = null, $dateScanned = null)
+    static public function calculateEstimatedValue($mainType, $type, $mass, $terraformState, $efficiencyBonus = null, $dateScanned = null, $isFirstDiscoverer = false, $isFirstMapper = false)
     {
         if(!is_null($dateScanned))
         {
@@ -147,23 +155,32 @@ trait Value
             }
 
             // CALCULATION
-            $q      = 0.56591828;
-            $value  = $value + $bonus;
+            $q              = 0.56591828;
+            $value          = $value + $bonus;
+            $mapMultiplier  = 1;
 
             if(!is_null($efficiencyBonus))
             {
+                $mapMultiplier = 3.3333333333;
+
+                if($isFirstDiscoverer === true && $isFirstMapper === true)
+                {
+                    $mapMultiplier = 3.699622554;
+                }
+                elseif($isFirstDiscoverer === false && $isFirstMapper === true)
+                {
+                    $mapMultiplier = 8.0956;
+                }
+
                 if($efficiencyBonus === true)
                 {
-                    $mapMultiplier = 3.3333333333 * 1.25;
-                }
-                else
-                {
-                    $mapMultiplier = 3.3333333333;
+                    $mapMultiplier *= 1.25;
                 }
             }
-            else
+
+            if($isFirstDiscoverer === true)
             {
-                $mapMultiplier = 1;
+                $value *= 2.6;
             }
 
             return round(max(($value + ($value * pow($mass, 0.2) * $q)) * $mapMultiplier, 500));
