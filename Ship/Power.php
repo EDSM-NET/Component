@@ -61,7 +61,7 @@ trait Power
                     else
                     {
                         \EDSM_Api_Logger_Alias::log(
-                            '\Alias\Station\Outfitting\Power: ' . \Alias\Station\Outfitting\Type::get($module['refOutfitting']) . ' (#' . $module['refOutfitting'] . ')',
+                            '\Alias\Station\Outfitting\PowerDraw: ' . \Alias\Station\Outfitting\Type::get($module['refOutfitting']) . ' (#' . $module['refOutfitting'] . ')',
                             array('file' => __FILE__, 'line' => __LINE__,)
                         );
                     }

@@ -8,7 +8,7 @@ namespace   Component\Body;
 
 trait Value
 {
-    public function getEstimatedValue($applyMappingMultiplier = false)
+    public function getEstimatedValue($applyMappingMultiplier = false, $isFirstDiscoverer = false, $isFirstMapper = false)
     {
         $efficiencyBonus = null;
 
@@ -23,12 +23,19 @@ trait Value
             $this->getType(),
             $this->getMass(),
             $this->getTerraformState(),
-            $efficiencyBonus
+            $efficiencyBonus,
+            null,
+            $isFirstDiscoverer,
+            $isFirstMapper
         );
     }
 
     /*
      *  @SEE https://forums.frontier.co.uk/showthread.php/232000-Exploration-value-formulae/
+     *
+     * $efficiencyBonus => NULL => No map
+     * $efficiencyBonus => FALSE => Mapped without bonus
+     * $efficiencyBonus => TRUE => Mapped with bonus
      */
     static public function calculateEstimatedValue($mainType, $type, $mass, $terraformState, $efficiencyBonus = null, $dateScanned = null, $isFirstDiscoverer = false, $isFirstMapper = false)
     {
@@ -178,12 +185,14 @@ trait Value
                 }
             }
 
+            $value = max(($value + ($value * pow($mass, 0.2) * $q)) * $mapMultiplier, 500);
+
             if($isFirstDiscoverer === true)
             {
                 $value *= 2.6;
             }
 
-            return round(max(($value + ($value * pow($mass, 0.2) * $q)) * $mapMultiplier, 500));
+            return round($value);
         }
 
         return 0;
