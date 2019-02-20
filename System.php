@@ -9,8 +9,9 @@ namespace   Component;
 class System extends Instance
 {
     use \Component\System\Body;
+    use \Component\System\Coordinates;
     use \Component\System\Death;
-    use \Component\System\EDTS;
+    use \Component\System\ID64;
     use \Component\System\GalacticCoordinate;
     use \Component\System\GalacticMapping;
     use \Component\System\Galnet;
@@ -22,21 +23,6 @@ class System extends Instance
 
     protected $_defaultModel    = 'Models_Systems';
     protected $_primaryKey      = 'id';
-
-    public function getId64()
-    {
-        if($this->isValid())
-        {
-            $id64 = $this->getIdentity('id64');
-
-            if(!is_null($id64))
-            {
-                return (int) $id64;
-            }
-        }
-
-        return null;
-    }
 
     public function getName()
     {
