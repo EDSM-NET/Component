@@ -8,15 +8,25 @@ namespace   Component\System;
 
 trait Coordinates
 {
-    private $_estimatedCoordinates = array();
+    static private $_estimatedCoordinates = array();
+
     public function getEstimatedCoordinates($maxUncertainty = 50)
     {
-        if(array_key_exists($maxUncertainty, $this->_estimatedCoordinates))
+        return self::getEstimatedCoordinatesFromName($this->getName(), $maxUncertainty);
+    }
+
+    public function getEstimatedCoordinatesFromName($systemName, $maxUncertainty = 50)
+    {
+        if(!array_key_exists($systemName, self::$_estimatedCoordinates))
         {
-            return $this->_estimatedCoordinates[$maxUncertainty];
+            self::$_estimatedCoordinates[$systemName] = array();
+        }
+        if(array_key_exists($maxUncertainty, self::$_estimatedCoordinates[$systemName]))
+        {
+            return self::$_estimatedCoordinates[$systemName][$maxUncertainty];
         }
 
-        $systemFragements = $this->getFragmentsFromName();
+        $systemFragements = self::getFragmentsFromName($systemName);
 
         if(!is_null($systemFragements))
         {
@@ -25,7 +35,7 @@ trait Coordinates
                 $systemFragements['n1'] = 0;
             }
 
-            $cubeSide       = $this->getCubeSide($systemFragements['mcode']);
+            $cubeSide       = self::getCubeSide($systemFragements['mcode']);
             $uncertainty    = round(($cubeSide / 2 ) * sqrt(3));
 
             if($uncertainty > $maxUncertainty)
@@ -52,20 +62,20 @@ trait Coordinates
             $estimatedZ     = ($estimatedZ * $cubeSide) + ($cubeSide / 2 );
 
             // Find sector position
-            $sectorPosition = $this->getSectorPosition($systemFragements['sector'], $cubeSide);
+            $sectorPosition = self::getSectorPosition($systemFragements['sector'], $cubeSide);
 
             $estimatedX = $estimatedX + $sectorPosition['x'];
             $estimatedY = $estimatedY + $sectorPosition['y'];
             $estimatedZ = $estimatedZ + $sectorPosition['z'];
 
-            $this->_estimatedCoordinates[$maxUncertainty] = array(
+            self::$_estimatedCoordinates[$systemName][$maxUncertainty] = array(
                 'x'             => $estimatedX,
                 'y'             => $estimatedY,
                 'z'             => $estimatedZ,
                 'uncertainty'   => $uncertainty,
             );
 
-            return $this->_estimatedCoordinates[$maxUncertainty];
+            return self::$_estimatedCoordinates[$systemName][$maxUncertainty];
         }
 
         return null;

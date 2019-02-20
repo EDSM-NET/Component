@@ -42,12 +42,17 @@ trait ID64
 
     public function calculateId64()
     {
-        $systemFragements = $this->getFragmentsFromName();
+        return self::calculateId64FromName($this->getName());
+    }
+
+    static public function calculateId64FromName($systemName)
+    {
+        $systemFragements = self::getFragmentsFromName($systemName);
 
         if(!is_null($systemFragements))
         {
-            $cubeSide       = $this->getCubeSide($systemFragements['mcode']);
-            $systemPosition = $this->getEstimatedCoordinates($cubeSide);
+            $cubeSide       = self::getCubeSide($systemFragements['mcode']);
+            $systemPosition = self::getEstimatedCoordinatesFromName($systemName, 1280);
 
             if(!is_null($systemPosition))
             {
@@ -276,10 +281,8 @@ trait ID64
 
 
 
-    public function getFragmentsFromName()
+    static private function getFragmentsFromName($systemName)
     {
-        $systemName = $this->getName();
-
         if(preg_match(self::$pgSystemRegex, $systemName, $matches) !== false)
         {
             if(count($matches) > 0)
@@ -291,16 +294,12 @@ trait ID64
         return null;
     }
 
-
-
-    public function getCubeSide($massCode)
+    static private function getCubeSide($massCode)
     {
         return self::$sectorSize / pow(2, ord('h') - ord(strtolower($massCode)));
     }
 
-
-
-    public function getSectorPosition($sectorName, $cubeSide)
+    static private function getSectorPosition($sectorName, $cubeSide)
     {
         $handAuthoredSectors = HandAuthoredSector::getAll();
 
