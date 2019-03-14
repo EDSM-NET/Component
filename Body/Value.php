@@ -10,40 +10,46 @@ trait Value
 {
     public function getEstimatedValue($applyMappingMultiplier = false, $isFirstDiscoverer = false, $isFirstMapper = false)
     {
-        $efficiencyBonus = null;
-
-        if($applyMappingMultiplier === true)
-        {
-            $efficiencyBonus = false; // Mapping without first mapping
-        }
-
         // Call a static method which can be used without instancing the complete body
         return static::calculateEstimatedValue(
             $this->getMainType(),
             $this->getType(),
             $this->getMass(),
             $this->getTerraformState(),
-            $efficiencyBonus,
-            null,
-            $isFirstDiscoverer,
-            $isFirstMapper
+            array(
+                'haveMapped'            => $applyMappingMultiplier,
+
+                'isFirstDiscoverer'     => $isFirstDiscoverer,
+                'isFirstMapper'         => $isFirstMapper,
+            )
         );
     }
 
     /*
      *  @SEE https://forums.frontier.co.uk/showthread.php/232000-Exploration-value-formulae/
-     *
-     * $efficiencyBonus => NULL => No map
-     * $efficiencyBonus => FALSE => Mapped without bonus
-     * $efficiencyBonus => TRUE => Mapped with bonus
      */
     //TODO: Main star value = Normal Main Star Calculation + SUM(MAX(Planetary Body FSS Value / 3.0, 500)) + SUM(Stellar Body FSS Value / 3.0)
     //TODO: There is a bonus of 1k per body for fully FSSing the system (so 8k), and a bonus of 10k per mapable body for fully mapping the system (so 70k).
-    static public function calculateEstimatedValue($mainType, $type, $mass, $terraformState, $efficiencyBonus = null, $dateScanned = null, $isFirstDiscoverer = false, $isFirstMapper = false)
+    static public function calculateEstimatedValue($mainType, $type, $mass, $terraformState, $options)
     {
-        if(!is_null($dateScanned))
+        // Merge default options
+        $options = array_merge(array(
+            'dateScanned'           => null,
+
+            'isFirstDiscoverer'     => false,
+            'isFirstMapper'         => false,
+
+            'haveMapped'            => false,
+            'efficiencyBonus'       => false,
+
+            'systemBodies'          => array(),
+            'isPrimaryStar'         => false,
+        ), $options);
+
+
+        if(!is_null($options['dateScanned']))
         {
-            if(strtotime($dateScanned) < strtotime('2017-04-11 12:00:00'))
+            if(strtotime($options['dateScanned']) < strtotime('2017-04-11 12:00:00'))
             {
                 return static::calculateEstimatedValueFrom22(
                     $mainType,
@@ -52,7 +58,7 @@ trait Value
                 );
             }
 
-            if(strtotime($dateScanned) < strtotime('2018-12-11 12:00:00'))
+            if(strtotime($options['dateScanned']) < strtotime('2018-12-11 12:00:00'))
             {
                 return static::calculateEstimatedValueFrom32(
                     $mainType,
@@ -168,20 +174,20 @@ trait Value
             $value          = $value + $bonus;
             $mapMultiplier  = 1;
 
-            if(!is_null($efficiencyBonus))
+            if($options['haveMapped'] === true)
             {
                 $mapMultiplier = 3.3333333333;
 
-                if($isFirstDiscoverer === true && $isFirstMapper === true)
+                if($options['isFirstDiscoverer'] === true && $options['isFirstMapper'] === true)
                 {
                     $mapMultiplier = 3.699622554;
                 }
-                elseif($isFirstDiscoverer === false && $isFirstMapper === true)
+                elseif($options['isFirstDiscoverer'] === false && $options['isFirstMapper'] === true)
                 {
                     $mapMultiplier = 8.0956;
                 }
 
-                if($efficiencyBonus === true)
+                if($options['efficiencyBonus'] === true)
                 {
                     $mapMultiplier *= 1.25;
                 }
@@ -189,7 +195,7 @@ trait Value
 
             $value = max(($value + ($value * pow($mass, 0.2) * $q)) * $mapMultiplier, 500);
 
-            if($isFirstDiscoverer === true)
+            if($options['isFirstDiscoverer'] === true)
             {
                 $value *= 2.6;
             }
