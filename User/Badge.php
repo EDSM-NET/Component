@@ -95,6 +95,9 @@ trait Badge
 
                         self::getModel('Models_Users_Badges')->insert($insert);
 
+                        // Prevent function recursion by adding new badges into the array
+                        $this->_badges[] = array('refBadge' => $badgeId);
+
                         // No badge given while clearing or deleting saves!
                         if(defined('Process_User_Delete_noGivingBadge'))
                         {
