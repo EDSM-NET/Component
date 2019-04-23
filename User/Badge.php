@@ -67,12 +67,6 @@ trait Badge
 
     public function giveBadge($badgeId, $extraDetail = null)
     {
-        // No badge given while clearing or deleting saves!
-        if(defined('Process_User_Delete_noGivingBadge'))
-        {
-            return;
-        }
-
         if($this->isValid() && $this->getRole() != 'guest')
         {
             if(BadgeAlias::isIndex($badgeId) && BadgeAlias::isActive($badgeId))
@@ -100,6 +94,12 @@ trait Badge
                         }
 
                         self::getModel('Models_Users_Badges')->insert($insert);
+
+                        // No badge given while clearing or deleting saves!
+                        if(defined('Process_User_Delete_noGivingBadge'))
+                        {
+                            return;
+                        }
 
                         $badge = BadgeAlias::get($badgeId);
 

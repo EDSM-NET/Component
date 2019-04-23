@@ -23,6 +23,11 @@ trait Activity
         return $this->getIdentity('dateLastLogin');
     }
 
+    public function getDateLastJournal()
+    {
+        return $this->getIdentity('dateLastJournal');
+    }
+
     public function getDateLastDocked()
     {
         $dateLastDocked = $this->getIdentity('dateLastDocked');
