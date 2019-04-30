@@ -150,8 +150,8 @@ trait Value
                 }
             }
 
-            // Water world
-            if(in_array($type, array(41)))
+            // Earth-like world / Water world
+            if(in_array($type, array(31, 41)))
             {
                 $value = 64831;
                 $bonus = 0;
@@ -160,13 +160,6 @@ trait Value
                 {
                     $bonus = 116295;
                 }
-            }
-
-            // Earth-like world
-            if(in_array($type, array(31)))
-            {
-                $value = 116295;
-                $bonus = 0;
             }
 
             // CALCULATION
