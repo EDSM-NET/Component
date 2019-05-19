@@ -160,6 +160,10 @@ trait Value
                 {
                     $bonus = 116295;
                 }
+                if($type == 31) // Earth Like...
+                {
+                    $bonus = 116295;
+                }
             }
 
             // CALCULATION
