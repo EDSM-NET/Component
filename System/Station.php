@@ -37,9 +37,9 @@ trait Station
                     // Check linked station?
                     $shipName = trim(str_ireplace('Rescue Ship - ', '', $station->getName()));
 
-                    if(array_key_exists(($key - 1), $this->view->stations))
+                    if(array_key_exists(($key - 1), $this->_stations))
                     {
-                        $testStation = $this->view->stations[($key - 1)];
+                        $testStation = $this->_stations[($key - 1)];
 
                         if($shipName == $testStation->getName())
                         {
