@@ -57,6 +57,21 @@ trait Armour
                             array('file' => __FILE__, 'line' => __LINE__,)
                         );
                     }
+
+                    $defenceModifierHealthMultiplier = \Alias\Station\Outfitting\DefenceModifierHealthMultiplier::get($module['refOutfitting']);
+
+                    if(!is_null($defenceModifierHealthMultiplier))
+                    {
+                        $defenceModifierHealthMultiplier = $this->calculateModuleModifiedValue($defenceModifierHealthMultiplier, $module, 'DefenceModifierHealthMultiplier');
+                        $integrity                      += $baseArmour * $defenceModifierHealthMultiplier / 100;
+                    }
+                    else
+                    {
+                        \EDSM_Api_Logger_Alias::log(
+                            '\Alias\Station\Outfitting\DefenceModifierHealthMultiplier: ' . \Alias\Station\Outfitting\Type::get($module['refOutfitting']) . ' (#' . $module['refOutfitting'] . ')',
+                            array('file' => __FILE__, 'line' => __LINE__,)
+                        );
+                    }
                 }
             }
         }
@@ -74,7 +89,7 @@ trait Armour
             else
             {
                 \EDSM_Api_Logger_Alias::log(
-                    '\Alias\Station\Outfitting\$defenceModifierHealthMultiplier: ' . \Alias\Station\Outfitting\Type::get($bulkheadModule['refOutfitting']) . ' (#' . $bulkheadModule['refOutfitting'] . ')',
+                    '\Alias\Station\Outfitting\DefenceModifierHealthMultiplier: ' . \Alias\Station\Outfitting\Type::get($bulkheadModule['refOutfitting']) . ' (#' . $bulkheadModule['refOutfitting'] . ')',
                     array('file' => __FILE__, 'line' => __LINE__,)
                 );
             }
