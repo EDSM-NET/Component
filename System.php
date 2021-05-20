@@ -174,44 +174,6 @@ class System extends Instance
     }
 
 
-    /**
-     * Featured?
-     */
-    protected $_featured = false;
-    public function getPushedToFront()
-    {
-        if($this->isValid() && $this->isHidden() === false)
-        {
-            if($this->_featured === false)
-            {
-                $this->_featured = self::getModel('Models_Systems_Featured')->getByRefSystem($this->getId());
-            }
-
-            if(!is_null($this->_featured) && array_key_exists('featuredAt', $this->_featured))
-            {
-                return $this->_featured['featuredAt'];
-            }
-        }
-
-        return null;
-    }
-
-    public function isPushedToFront()
-    {
-        if($this->isValid() && $this->isHidden() === false)
-        {
-            $featuredStatus = $this->getPushedToFront();
-
-            if(!is_null($featuredStatus))
-            {
-                return true;
-            }
-        }
-
-        return false;
-    }
-
-
 
     public function getUpdateTime()
     {
