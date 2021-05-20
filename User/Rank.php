@@ -125,6 +125,54 @@ trait Rank
         return 0;
     }
 
+    public function getRankMercenary()
+    {
+        $rank = $this->getRanks();
+
+        if(!is_null($rank) && array_key_exists('mercenary', $rank))
+        {
+            return (int) $rank['mercenary'];
+        }
+
+        return 0;
+    }
+
+    public function getRankMercenaryProgress()
+    {
+        $rank = $this->getRanks();
+
+        if(!is_null($rank) && array_key_exists('mercenaryProgress', $rank))
+        {
+            return (int) $rank['mercenaryProgress'];
+        }
+
+        return 0;
+    }
+
+    public function getRankExobiologist()
+    {
+        $rank = $this->getRanks();
+
+        if(!is_null($rank) && array_key_exists('exobiologist', $rank))
+        {
+            return (int) $rank['exobiologist'];
+        }
+
+        return 0;
+    }
+
+    public function getRankExobiologistProgress()
+    {
+        $rank = $this->getRanks();
+
+        if(!is_null($rank) && array_key_exists('exobiologistProgress', $rank))
+        {
+            return (int) $rank['exobiologistProgress'];
+        }
+
+        return 0;
+    }
+
     public function getRankCQC()
     {
         $rank = $this->getRanks();
