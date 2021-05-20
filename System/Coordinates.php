@@ -15,7 +15,7 @@ trait Coordinates
         return self::getEstimatedCoordinatesFromName($this->getName(), $maxUncertainty);
     }
 
-    public function getEstimatedCoordinatesFromName($systemName, $maxUncertainty = 50)
+    static public function getEstimatedCoordinatesFromName($systemName, $maxUncertainty = 50)
     {
         if(!array_key_exists($systemName, self::$_estimatedCoordinates))
         {
