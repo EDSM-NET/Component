@@ -8,7 +8,7 @@ namespace   Component\Body;
 
 trait Value
 {
-    public function getEstimatedValue($applyMappingMultiplier = false, $isFirstDiscoverer = false, $isFirstMapper = false)
+    public function getEstimatedValue($applyMappingMultiplier = false, $isFirstDiscoverer = false, $isFirstMapper = false, $efficiencyBonus = false)
     {
         // Call a static method which can be used without instancing the complete body
         return static::calculateEstimatedValue(
@@ -21,6 +21,7 @@ trait Value
 
                 'isFirstDiscoverer'     => $isFirstDiscoverer,
                 'isFirstMapper'         => $isFirstMapper,
+                'efficiencyBonus'       => $efficiencyBonus,
             )
         );
     }
